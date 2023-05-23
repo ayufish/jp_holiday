@@ -11,6 +11,10 @@ repositories {
 
 dependencies {
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+    implementation group: 'org.jooq', name: 'jooq', version: '3.18.4'
+    implementation group: 'org.jooq', name: 'jooq-meta', version: '3.18.4'
+    implementation group: 'org.jooq', name: 'jooq-codegen', version: '3.18.4'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
 }
 
 test {
