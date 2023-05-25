@@ -3,9 +3,7 @@ package com.windyu;
 import com.windyu.jooq.model.tables.JpHoliday;
 import com.windyu.jooq.model.tables.records.JpHolidayRecord;
 
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -25,17 +23,27 @@ public class App {
         var dslCtx = DBAccess.getDSLContext();
         var holList = new ArrayList<JpHolidayRecord>();
 
+        // get count of holiday table
+        int dbCount = dslCtx.fetchCount(JpHoliday.JP_HOLIDAY);
+        System.out.println(dbCount);
+
         // ignore first line
         s.next();
-        while (s.hasNext()){
-            String[] line = s.next().split(",");
-            LocalDate date = LocalDate.parse(line[0], DateTimeFormatter.ofPattern("yyyy/M/d"));
-            var name = line[1];
+        var count = 0;
+        while (s.hasNext()) {
+            count++;
+            var nextLine = s.next();
+            // only insert data which is not in table(by comparing count)
+            if (count > dbCount) {
+                String[] line = nextLine.split(",");
+                LocalDate date = LocalDate.parse(line[0], DateTimeFormatter.ofPattern("yyyy/M/d"));
+                var name = line[1];
 
-            var hol = dslCtx.newRecord(JpHoliday.JP_HOLIDAY);
-            hol.setHolDate(date);
-            hol.setHolName(name);
-            holList.add(hol);
+                var hol = dslCtx.newRecord(JpHoliday.JP_HOLIDAY);
+                hol.setHolDate(date);
+                hol.setHolName(name);
+                holList.add(hol);
+            }
         }
 
         dslCtx.batchStore(holList).execute();
